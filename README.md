@@ -15,8 +15,8 @@ optional arguments:
   -d host        host to scan
   -l hostfile|-  list of hosts, one per line (- instead of a file to read from
                  stdin)
-  -sys system    comma seperated list of misc|php|cfm|asp|html|pma|all
-                 (default: misc)
+  -sys system    comma seperated list of dirs|php|cfm|asp|html|pma
+                 (default: dirs)
   -c cookie      cookie string for authenticated scanning
   -ic            ignore invalid tls certificate
   -k             halt on first valid path
