@@ -1,4 +1,5 @@
 #!/usr/bin/env python2
+# -*- coding: utf-8 -*-
 # author: takeshix@adversec.com
 import requests,argparse,sys
 
@@ -25,7 +26,8 @@ class mylogs:
 
 if args.v: log = mylogs()
         
-asp = ['account.asp','admin/account.asp','admin/index.asp','admin/login.asp',
+asp = [
+'account.asp','admin/account.asp','admin/index.asp','admin/login.asp',
 'admin/admin.asp','admin_area/admin.asp','admin_area/login.asp','admin_area/index.asp',
 'bb-admin/index.asp','bb-admin/login.asp','bb-admin/admin.asp','admin/home.asp',
 'admin/controlpanel.asp','admin.asp','pages/admin/admin-login.asp','admin/admin-login.asp',
@@ -589,7 +591,7 @@ def gen_payload():
     pl = []
     try:
         if not args.sys:
-            pl = pl + misc
+            pl = pl + dirs
         else:
             for pset in args.sys.split(','):
                 pl = pl + global_payloads[pset]
