@@ -572,6 +572,7 @@ def gen_payload():
         return pl
     except Exception as e:
         print str(e)
+        sys.exit(0)
 
 def check(pl,host):
     headers = {
@@ -637,6 +638,7 @@ if __name__ == '__main__':
 
     except Exception as e:
         print str(e)            
+        sys.exit(0)
             
 
 
