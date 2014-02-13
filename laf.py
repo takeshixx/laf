@@ -6,7 +6,7 @@ import requests,argparse,sys
 parser = argparse.ArgumentParser(description='Find admin/login panel for a single host (-d) or a list of hosts (-l).')
 parser.add_argument('-d', metavar='host', help='host to scan')
 parser.add_argument('-l', metavar='hostfile|-', type=argparse.FileType('r'), help='list of hosts, one per line (- instead of a file to read from stdin)')
-parser.add_argument('-sys', metavar='system', help='comma seperated list of dirs|php|cfm|asp|html|pma (default: dirs)')
+parser.add_argument('-sys', metavar='system', help='comma seperated list of dirs|php|cfm|asp|pl|html|pma (default: dirs)')
 parser.add_argument('-c', metavar='cookie', help='cookie string for authenticated scanning')
 parser.add_argument('-ic', action='store_true', default=False, help='ignore invalid tls certificate')
 parser.add_argument('-k', action='store_true', default=False, help='halt on first valid path')
@@ -25,113 +25,31 @@ class mylogs:
         print '\033[1;32m[VALID] [STATUS: {}] {}\033[0m'.format(sc,msg)
 
 if args.v: log = mylogs()
-        
-asp = [
-'account.asp','admin/account.asp','admin/index.asp','admin/login.asp',
-'admin/admin.asp','admin_area/admin.asp','admin_area/login.asp','admin_area/index.asp',
-'bb-admin/index.asp','bb-admin/login.asp','bb-admin/admin.asp','admin/home.asp',
-'admin/controlpanel.asp','admin.asp','pages/admin/admin-login.asp','admin/admin-login.asp',
-'admin-login.asp','admin/cp.asp','cp.asp','administrator/account.asp','administrator.asp',
-'login.asp','modelsearch/login.asp','moderator.asp','moderator/login.asp','administrator/login.asp',
-'moderator/admin.asp','controlpanel.asp','user.asp','admincp/index.asp','admincp/login.asp',
-'admincontrol.asp','admin/account.asp','adminpanel.asp','webadmin.asp','webadmin/index.asp',
-'webadmin/admin.asp','webadmin/login.asp','admin/admin_login.asp','admin_login.asp',
-'panel-administracion/login.asp','adminLogin.asp','admin/adminLogin.asp','home.asp','admin.asp',
-'adminarea/index.asp','adminarea/admin.asp','adminarea/login.asp','panel-administracion/index.asp',
-'panel-administracion/admin.asp','modelsearch/index.asp','modelsearch/admin.asp',
-'administrator/index.asp','admincontrol/login.asp','adm/admloginuser.asp','admloginuser.asp',
-'admin2.asp','admin2/login.asp','admin2/index.asp','adm/index.asp','adm.asp','affiliate.asp',
-'adm_auth.asp','memberadmin.asp','administratorlogin.asp','siteadmin/login.asp',
-'siteadmin/index.asp','Util/login.aspx'
-]
-
-cfm = [
-'account.cfm','admin/account.cfm','admin/index.cfm','admin/login.cfm',
-'admin/admin.cfm','admin_area/admin.cfm','admin_area/login.cfm','admin_area/index.cfm',
-'bb-admin/index.cfm','bb-admin/login.cfm','bb-admin/admin.cfm','admin/home.cfm',
-'admin/controlpanel.cfm','admin.cfm','pages/admin/admin-login.cfm','admin/admin-login.cfm',
-'admin-login.cfm','admin/cp.cfm','cp.cfm','administrator/account.cfm','administrator.cfm',
-'login.cfm','modelsearch/login.cfm','moderator.cfm','moderator/login.cfm',
-'administrator/login.cfm','moderator/admin.cfm','controlpanel.cfm',
-'user.cfm','admincp/index.cfm','admincp/login.cfm','admincontrol.cfm','admin/account.cfm',
-'adminpanel.cfm','webadmin.cfm','webadmin/index.cfm','webadmin/admin.cfm','webadmin/login.cfm',
-'admin/admin_login.cfm','admin_login.cfm','panel-administracion/login.cfm','adminLogin.cfm',
-'admin/adminLogin.cfm','home.cfm','admin.cfm','adminarea/index.cfm','adminarea/admin.cfm',
-'adminarea/login.cfm','panel-administracion/index.cfm','panel-administracion/admin.cfm',
-'modelsearch/index.cfm','modelsearch/admin.cfm','administrator/index.cfm',
-'admincontrol/login.cfm','adm/admloginuser.cfm','admloginuser.cfm','admin2.cfm',
-'admin2/login.cfm','admin2/index.cfm','adm/index.cfm','adm.cfm','affiliate.cfm','adm_auth.cfm',
-'memberadmin.cfm','administratorlogin.cfm','siteadmin/login.cfm','siteadmin/index.cfm'
-]
-
-php = [
-'admin/account.php','admin/index.php','admin/fuckoff.php','admin/login.php',
-'admin/admin.php','admin/account.php','admin_area/admin.php','admin_area/login.php',
-'siteadmin/login.php','siteadmin/index.php','admin_area/index.php','bb-admin/index.php',
-'bb-admin/login.php','bb-admin/admin.php','admin/home.php','admin/controlpanel.php',
-'admin.php','admin/cp.php','cp.php','administrator/index.php','administrator/login.php',
-'nsw/admin/login.php','index.php?page=admin','webadmin/login.php','admin/admin_login.php',
-'admin_login.php','administrator/account.php','administrator.php','pages/admin/admin-login.php',
-'admin/admin-login.php','admin-login.php','login.php','modelsearch/login.php',
-'moderator.php','moderator/login.php','moderator/admin.php','account.php',
-'controlpanel.php','admincontrol.php','rcjakar/admin/login.php','webadmin.php',
-'webadmin/index.php','webadmin/admin.php','adminpanel.php','user.php',
-'panel-administracion/login.php','wp-login.php','adminLogin.php','admin/adminLogin.php',
-'home.php','admin.php','adminarea/index.php','adminarea/admin.php','adminarea/login.php',
-'panel-administracion/index.php','panel-administracion/admin.php','modelsearch/index.php',
-'modelsearch/admin.php','admincontrol/login.php','adm/admloginuser.php','admloginuser.php',
-'admin2.php','admin2/login.php','admin2/index.php','adm/index.php','adm.php',
-'affiliate.php','adm_auth.php','memberadmin.php','administratorlogin.php','server_login.php/',
-'user_login.php','userlogin.php','fileadmin.php','ur-admin.php','typo3/login.php'
-]
-
-html = [
-'account.html','controlpanel.html','admincontrol.html','moderator/login.html',
-'admin_login.html','panel-administracion/login.html','bb-admin/index.html',
-'admin_area/admin.html','admin_area/login.html','admin_area/index.html',
-'bb-admin/login.html','bb-admin/admin.html','admin/home.html',
-'admin/controlpanel.html','admin.html','admin/cp.html','cp.html',
-'administrator/index.html','administrator/login.html','administrator/account.html',
-'administrator.html','login.html','modelsearch/login.html','moderator.html',
-'adm/index.html','adm.html','moderator/admin.html','panel-administracion/index.html',
-'panel-administracion/admin.html','modelsearch/index.html','modelsearch/admin.html',
-'admin/admin_login.html','admincontrol/login.html','adm/index.html','adm.html',
-'admin/account.html','adminpanel.html','webadmin.html','pages/admin/admin-login.html',
-'admin/admin-login.html','webadmin/index.html','webadmin/admin.html',
-'webadmin/login.html','user.html','admincp/index.html','admin/adminLogin.html',
-'adminLogin.html','home.html','adminarea/index.html','adminarea/admin.html',
-'adminarea/login.html','admin-login.html','siteadmin/login.html','admin/index.html',
-'admin/login.html','admin/admin.html','admincontrol/login.html'
-]
 
 dirs = [
 'admin/',
 'administrator/',
 'administration/',
+'admincp/',
 'moderator/',
 'webadmin/',
 'mobileadmin/',
 'adminarea/',
 'bb-admin/',
-'typo3/',
-'typo3admin/',
-'typo3login/',
-'wp-admin/',
-'wp-login/',
-'pma/',
-'PMA/',
-'dbadmin/',
 'adminLogin/',
 'admin_area/',
 'cmsadmin/',
 'fileadmin/',
+'dbadmin/',
 'vmailadmin/',
+'/',
 'acp/',
 'acp2/',
 'cp/',
 'login/',
 'login2/',
 'xtAdmin/',
+'modelsearch/',
 'mysql/',
 'controlpanel/',
 'panel-administracion/',
@@ -174,6 +92,9 @@ dirs = [
 'SysAdmin/',
 'SysAdmin2/',
 'sys-admin/',
+'adminarea/',
+'Adminarea/',
+'pages/admin/',
 'support-login/',
 'Super-Admin/',
 'sub-login/',
@@ -191,9 +112,6 @@ dirs = [
 'pureadmin/',
 'project-admins/',
 'platz_login/',
-'phpSQLiteAdmin/',
-'phppgadmin/',
-'phpldapadmin/',
 'pgadmin/',
 'painel/',
 'openvpnadmin/',
@@ -234,6 +152,49 @@ dirs = [
 'administer/',
 'admin4_colon/',
 'admin4_account/',
+'Util/'
+]
+
+files = [
+'index',
+'login',
+'admin',
+'admin2',
+'administrator',
+'account',
+'user',
+'home',
+'controlpanel',
+'admin-login',
+'admin_login',
+'adminLogin',
+'cp',
+'moderator',
+'admincontrol',
+'adminpanel',
+'webadmin',
+'admloginuser',
+'adm',
+'affiliate',
+'adm_auth',
+'memberadmin',
+'administratorlogin',
+'administrator-login',
+'administratorLogin',
+]
+
+# php only directories
+php = [
+'typo3/',
+'typo3admin/',
+'typo3login/',
+'wp-admin/',
+'wp-login/',
+'pma/',
+'PMA/',
+'phpSQLiteAdmin/',
+'phppgadmin/',
+'phpldapadmin/',
 ]
 
 pma = [
@@ -529,63 +490,63 @@ pma = [
 'phpMyAdmin-1.1.0/',
 ]
 
-global_payloads = {'asp':asp,'cfm':cfm,'php':php,'html':html,'dirs':dirs,'pma':pma}
+global_payloads = {'dirs':dirs,'pma':pma}
 
 success_strings = [
-    'username',
-    'user',
-    'password',
-    'pass',
-    'kennwort',
-    'benutzername',
-    'login',
-    'logon'
-    'clave',
-    'admin',
-    'panel'
-    'authorization',
-    'authenticate',
-    'root',
-    'configure',
-    'Client Authentication Remote Service',
-    'ExtendNet DX Configuration',
-    'forcelogon.htm',
-    'IMail Server Web Messaging',
-    'Management Console',
-    'console',
-    'Please identify yourself',
-    'identify',
-    'Reload acp_userinfo database',
-    'RSA SecurID User Name Request',
-    'The userid or password that was specified is not valid.',
-    'TYPE=password'
-    ]
+'username',
+'user',
+'password',
+'pass',
+'kennwort',
+'benutzername',
+'login',
+'logon'
+'clave',
+'admin',
+'panel'
+'authorization',
+'authenticate',
+'root',
+'configure',
+'Client Authentication Remote Service',
+'ExtendNet DX Configuration',
+'forcelogon.htm',
+'IMail Server Web Messaging',
+'Management Console',
+'console',
+'Please identify yourself',
+'identify',
+'Reload acp_userinfo database',
+'RSA SecurID User Name Request',
+'The userid or password that was specified is not valid.',
+'TYPE=password'
+]
 
 failed_strings = [
-    'Access Failed',
-    'an error',
-    'Bad Request',
-    'could not find',
-    'error has occurred',
-    'Error 404',
-    'Error Occurred While Processing Request',
-    'Error processing SSI file',
-    'FireWall-1 message',
-    'name=qt id="search" size=40 value=" "',
-    'No web site is configured at this address',
-    'not found',
-    'parameter is incorrect',
-    'Unable to complete your request',
-    'unable to open',
-    'Hack Attempts',
-    'does not exist',
-    '<b>Wrong URL.',
-    'page may no longer exist',
-    'page no longer exist',
-    'Your session has expired',
-    'no longer available',
-    'konnte nicht gefunden werden'
-    ]
+'Access Failed',
+'an error',
+'Bad Request',
+'could not find',
+'error has occurred',
+'Error 404',
+'Error Occurred While Processing Request',
+'Error processing SSI file',
+'FireWall-1 message',
+'name=qt id="search" size=40 value=" "',
+'No web site is configured at this address',
+'not found',
+'parameter is incorrect',
+'Unable to complete your request',
+'unable to open',
+'Hack Attempts',
+'does not exist',
+'<b>Wrong URL.',
+'page may no longer exist',
+'page no longer exist',
+'Your session has expired',
+'no longer available',
+'konnte nicht gefunden werden'
+]
 
 def gen_payload():
     pl = []
@@ -594,7 +555,19 @@ def gen_payload():
             pl = pl + dirs
         else:
             for pset in args.sys.split(','):
-                pl = pl + global_payloads[pset]
+                if pset == 'dirs' or pset == 'pma':
+                    pl = pl + global_payloads[pset]
+                elif pset == 'php' or pset == 'cfm' or pset == 'asp' or pset == 'pl':
+                    for item in files:
+                        for directory in dirs:
+                            pl.append('{}{}.{}'.format(directory,item,pset))
+
+                    if pset == 'php':
+                        for item in files:
+                            for directory in php:
+                                pl.append('{}{}.{}'.format(directory,item,pset))
+                else:
+                    raise Exception('invalid payload set')
     
         return pl
     except Exception as e:
@@ -605,12 +578,13 @@ def check(pl,host):
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:25.0) Gecko/20100101 Firefox/25.0'
     }
 
-    if args.c:
-        cookies = dict(args.c)
-    else:
-        cookies = None
-    
     try:
+
+        if args.c:
+            cookies = dict(args.c)
+        else:
+            cookies = None
+    
         if args.ic:
             return requests.get('{}{}'.format(host,pl), headers=headers, cookies=cookies, verify=False)
         else:
