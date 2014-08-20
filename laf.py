@@ -2,12 +2,16 @@
 # -*- coding: utf-8 -*-
 # author: takeshix@adversec.com
 import requests,argparse,sys
+from requests.auth import HTTPDigestAuth
 
 parser = argparse.ArgumentParser(description='Find admin/login panel for a single host (-d) or a list of hosts (-l).')
 parser.add_argument('-d', metavar='host', help='host to scan')
 parser.add_argument('-l', metavar='hostfile|-', type=argparse.FileType('r'), help='list of hosts, one per line (- instead of a file to read from stdin)')
 parser.add_argument('-sys', metavar='system', help='comma seperated list of dirs|php|cfm|asp|pl|html|pma (default: dirs)')
-parser.add_argument('-c', metavar='cookie', help='cookie string for authenticated scanning')
+parser.add_argument('-c', metavar='cookie', help='cookie')
+parser.add_argument('-u', metavar='user', help='http authentication username')
+parser.add_argument('-da', action='store_true', default=False, help='use digest auth instead of basic')
+parser.add_argument('-p', metavar='pass', help='http authentication password')
 parser.add_argument('-ic', action='store_true', default=False, help='ignore invalid tls certificate')
 parser.add_argument('-k', action='store_true', default=False, help='halt on first valid path')
 parser.add_argument('-v', action='store_true', default=False, help='enable verbosity')
@@ -81,6 +85,7 @@ dirs = [
 'sql-admin/',
 'administratorlogin/',
 'adm/',
+'owa',
 'vadmind/',
 'wizmysqladmin/',
 'v2/painel/',
@@ -160,6 +165,7 @@ files = [
 'login',
 'admin',
 'admin2',
+'admin3',
 'administrator',
 'account',
 'user',
@@ -585,11 +591,19 @@ def check(pl,host):
             cookies = dict(args.c)
         else:
             cookies = None
+
+        if args.u and args.p:
+            if args.da:
+                auth = HTTPDigestAuth(args.u, args.p)
+            else:
+                auth = (args.u, args.p)
+        else:
+            auth = None
     
         if args.ic:
-            return requests.get('{}{}'.format(host,pl), headers=headers, cookies=cookies, verify=False)
+            return requests.get('{}{}'.format(host,pl), headers=headers, cookies=cookies, auth=auth, verify=False)
         else:
-            return requests.get('{}{}'.format(host,pl), headers=headers, cookies=cookies)
+            return requests.get('{}{}'.format(host,pl), headers=headers, cookies=cookies, auth=auth)
 
     except Exception as e:
         print str(e)
