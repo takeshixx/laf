@@ -23,7 +23,6 @@ optional arguments:
   -ic            ignore invalid tls certificate
   -k             halt on first valid path
   -v             enable verbosity
-
 ```
 
 Scan a single host:
