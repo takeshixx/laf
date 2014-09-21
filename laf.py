@@ -46,7 +46,6 @@ dirs = [
 'fileadmin/',
 'dbadmin/',
 'vmailadmin/',
-'/',
 'acp/',
 'acp2/',
 'cp/',
@@ -632,22 +631,11 @@ if __name__ == '__main__':
                 sc = ret.status_code
                 co = ret.text.upper()
 
-                if sc == 200:
-                    for s in success_strings:
-                        if s in co:
-                            valid = True
-                            break
-
-                    for s in failed_strings:
-                        if s in co:
-                            valid = False
-                            break
-
-                if valid or sc == 401:
+                if sc != 404:
                     if args.v: log.info('{}{}'.format(host,payload),sc)
                     else: print '{}{}'.format(host,payload)
                     if args.k: sys.exit(0)
-                elif not valid or sc != 200:
+                else:
                     if args.v: log.fail('{}{}'.format(host,payload),sc)
 
     except Exception as e:
